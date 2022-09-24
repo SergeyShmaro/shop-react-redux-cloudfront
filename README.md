@@ -1,3 +1,7 @@
+# Links to S3 and cloudfront:
+S3: http://e-shop-rs.s3-website-eu-west-1.amazonaws.com/
+CloudFront: https://d34adt1mhu7xw1.cloudfront.net/
+
 # React-shop-cloudfront
 
 This is frontend starter project for nodejs-aws mentoring program. It uses the following technologies:
