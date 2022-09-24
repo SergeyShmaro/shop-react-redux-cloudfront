@@ -28,13 +28,14 @@ test("Renders products list", async () => {
     },
   ];
   server.use(
-    rest.get(`${API_PATHS.bff}/product/available`, (req, res, ctx) => {
+    rest.get(`${API_PATHS.product}/products`, (req, res, ctx) => {
       return res(
         ctx.status(200),
         ctx.delay(),
         ctx.json<AvailableProduct[]>(products)
       );
     }),
+    // @ts-expect-error api temporay unavailable
     rest.get(`${API_PATHS.cart}/profile/cart`, (req, res, ctx) => {
       return res(ctx.status(200), ctx.json<CartItem[]>([]));
     })

@@ -10,6 +10,7 @@ export default function PageProductImport() {
     <Box py={3}>
       <Box mb={2} display="flex" justifyContent="space-between">
         <CSVFileImport
+          // @ts-expect-error api temporay unavailable
           url={`${API_PATHS.import}/import`}
           title="Import Products CSV"
         />

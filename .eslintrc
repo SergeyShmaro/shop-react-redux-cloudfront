@@ -11,7 +11,11 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "react", "prettier"],
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "prettier"
+  ],
   "env": {
     "browser": true,
     "node": true
