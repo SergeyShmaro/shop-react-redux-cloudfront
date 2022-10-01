@@ -5,7 +5,9 @@ import API_PATHS from "~/constants/apiPaths";
 import { CartItem } from "~/models/CartItem";
 
 export function useCart() {
+  return { data: [], isFetching: false };
   return useQuery<CartItem[], AxiosError>("cart", async () => {
+    // @ts-expect-error cart route is temporary unavailable
     const res = await axios.get<CartItem[]>(`${API_PATHS.cart}/profile/cart`, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
@@ -29,7 +31,9 @@ export function useInvalidateCart() {
 }
 
 export function useUpsertCart() {
+  return { mutate: () => undefined };
   return useMutation((values: CartItem) =>
+    // @ts-expect-error cart route is temporary unavailable
     axios.put<CartItem[]>(`${API_PATHS.cart}/profile/cart`, values, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,

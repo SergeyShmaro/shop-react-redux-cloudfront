@@ -2,24 +2,18 @@ import axios, { AxiosError } from "axios";
 import API_PATHS from "~/constants/apiPaths";
 import { AvailableProduct } from "~/models/Product";
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { products } from "../mocks/data";
 import React from "react";
 
-export function useAvailableProducts(): {
-  data: AvailableProduct[];
-  isLoading: boolean;
-} {
-  // @ts-expect-error mocking data while API is not ready
-  return { data: products, isLoading: false };
-  // return useQuery<AvailableProduct[], AxiosError>(
-  //   "available-products",
-  //   async () => {
-  //     const res = await axios.get<AvailableProduct[]>(
-  //       `${API_PATHS.bff}/product/available`
-  //     );
-  //     return res.data;
-  //   }
-  // );
+export function useAvailableProducts() {
+  return useQuery<AvailableProduct[], AxiosError>(
+    "available-products",
+    async () => {
+      const res = await axios.get<AvailableProduct[]>(
+        `${API_PATHS.product}/products`
+      );
+      return res.data;
+    }
+  );
 }
 
 export function useInvalidateAvailableProducts() {
@@ -35,7 +29,7 @@ export function useAvailableProduct(id?: string) {
     ["product", { id }],
     async () => {
       const res = await axios.get<AvailableProduct>(
-        `${API_PATHS.bff}/product/${id}`
+        `${API_PATHS.product}/products/${id}`
       );
       return res.data;
     },
@@ -53,8 +47,10 @@ export function useRemoveProductCache() {
 }
 
 export function useUpsertAvailableProduct() {
+  // temporary disable request
+  return { mutateAsync: () => undefined };
   return useMutation((values: AvailableProduct) =>
-    axios.put<AvailableProduct>(`${API_PATHS.bff}/product`, values, {
+    axios.put<AvailableProduct>(`${API_PATHS.product}/product`, values, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
       },
@@ -63,8 +59,10 @@ export function useUpsertAvailableProduct() {
 }
 
 export function useDeleteAvailableProduct() {
+  // temporary disable request
+  return { mutate: () => undefined };
   return useMutation((id: string) =>
-    axios.delete(`${API_PATHS.bff}/product/${id}`, {
+    axios.delete(`${API_PATHS.product}/product/${id}`, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
       },

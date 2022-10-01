@@ -1,7 +1,7 @@
 import React from "react";
-import { Order, OrderItem } from "~/models/Order";
+import { OrderItem, Order } from "~/models/Order";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import PaperLayout from "~/components/PaperLayout/PaperLayout";
 import Typography from "@mui/material/Typography";
 import API_PATHS from "~/constants/apiPaths";
@@ -30,27 +30,34 @@ type FormValues = {
 };
 
 export default function PageOrder() {
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
   const results = useQueries([
-    {
-      queryKey: ["order", { id }],
-      queryFn: async () => {
-        const res = await axios.get<Order>(`${API_PATHS.order}/order/${id}`);
-        return res.data;
-      },
-    },
+    // {
+    //   queryKey: ["order", { id }],
+    //   queryFn: async () => {
+    //     const res = await axios.get<Order>(`${API_PATHS.order}/order/${id}`);
+    //     return res.data;
+    //   },
+    // },
     {
       queryKey: "products",
       queryFn: async () => {
         const res = await axios.get<AvailableProduct[]>(
-          `${API_PATHS.bff}/product/available`
+          `${API_PATHS.product}/products`
         );
         return res.data;
       },
     },
   ]);
+  const order: Order = {
+    id: "",
+    items: [],
+    address: { firstName: "", lastName: "", address: "", comment: "" },
+    statusHistory: [],
+  };
+  const isOrderLoading = false;
   const [
-    { data: order, isLoading: isOrderLoading },
+    // { data: order, isLoading: isOrderLoading },
     { data: products, isLoading: isProductsLoading },
   ] = results;
   const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
