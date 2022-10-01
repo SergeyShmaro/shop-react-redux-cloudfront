@@ -8,6 +8,9 @@ import { formatAsPrice } from "~/utils/utils";
 import AddProductToCart from "~/components/AddProductToCart/AddProductToCart";
 import { useAvailableProducts } from "~/queries/products";
 
+const noImageSrc =
+  "https://pbs.twimg.com/profile_images/1025746804942557184/DWvpod62_400x400.jpg";
+
 export default function Products() {
   const { data = [], isLoading } = useAvailableProducts();
 
@@ -25,7 +28,7 @@ export default function Products() {
           >
             <CardMedia
               sx={{ pt: "56.25%" }}
-              image={`https://source.unsplash.com/random?sig=${index}`}
+              image={product.imageSrc || noImageSrc}
               title="Image title"
             />
             <CardContent sx={{ flexGrow: 1 }}>
