@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 type CSVFileImportProps = {
   url: string;
@@ -10,6 +10,8 @@ type CSVFileImportProps = {
 
 export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   const [file, setFile] = React.useState<File>();
+
+  const authorization_token = localStorage.getItem("authorization_token");
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -26,20 +28,37 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   const uploadFile = async () => {
     console.log("uploadFile to", url);
     if (!file?.name) return;
-    const response = await axios({
-      method: "GET",
-      url,
-      params: {
-        name: encodeURIComponent(file.name),
-      },
-    });
-    console.log("File to upload: ", file.name);
-    console.log("Uploading to: ", response.data);
-    const result = await fetch(response.data, {
-      method: "PUT",
-      body: file,
-    });
-    console.log("Result: ", result);
+
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+        params: {
+          name: encodeURIComponent(file.name),
+        },
+        ...(authorization_token
+          ? { headers: { Authorization: `Basic ${authorization_token}` } }
+          : {}),
+      });
+
+      console.log("File to upload: ", file.name);
+      console.log("Uploading to: ", response.data);
+
+      const result = await fetch(response.data, {
+        method: "PUT",
+        body: file,
+      });
+      console.log("Result: ", result);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const responseStatus = error?.response?.status;
+        if (responseStatus === 401 || responseStatus === 403) {
+          const message = `Rsponse to upload the file returned ${responseStatus} status.`;
+          console.log(message);
+          alert(message);
+        }
+      }
+    }
     setFile(undefined);
   };
   return (
