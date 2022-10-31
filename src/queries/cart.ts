@@ -2,18 +2,19 @@ import axios, { AxiosError } from "axios";
 import React from "react";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import API_PATHS from "~/constants/apiPaths";
-import { CartItem } from "~/models/CartItem";
+import { Cart, CartItem } from "~/models/CartItem";
 
 export function useCart() {
-  return { data: [], isFetching: false };
-  return useQuery<CartItem[], AxiosError>("cart", async () => {
-    // @ts-expect-error cart route is temporary unavailable
-    const res = await axios.get<CartItem[]>(`${API_PATHS.cart}/profile/cart`, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    });
-    return res.data;
+  return useQuery<Cart, AxiosError>("cart", async () => {
+    const res = await axios.get<{ data: { cart: Cart } }>(
+      `${API_PATHS.cart}/profile/cart`,
+      {
+        headers: {
+          Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
+        },
+      }
+    );
+    return res.data.data.cart;
   });
 }
 
@@ -31,9 +32,7 @@ export function useInvalidateCart() {
 }
 
 export function useUpsertCart() {
-  return { mutate: () => undefined };
   return useMutation((values: CartItem) =>
-    // @ts-expect-error cart route is temporary unavailable
     axios.put<CartItem[]>(`${API_PATHS.cart}/profile/cart`, values, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
