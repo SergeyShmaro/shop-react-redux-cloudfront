@@ -8,23 +8,26 @@ import { useCart, useInvalidateCart, useUpsertCart } from "~/queries/cart";
 
 type AddProductToCartProps = {
   product: Product;
+  stockCount?: number;
 };
 
-export default function AddProductToCart({ product }: AddProductToCartProps) {
-  const { data = [], isFetching } = useCart();
+export default function AddProductToCart({
+  product,
+  stockCount,
+}: AddProductToCartProps) {
+  const { data = { items: [] }, isFetching } = useCart();
   const { mutate: upsertCart } = useUpsertCart();
   const invalidateCart = useInvalidateCart();
-  const cartItem = data.find((i) => i.product.id === product.id);
+  const cartItem = data.items.find((i) => i.product.id === product.id);
 
   const addProduct = () => {
-    upsertCart(
-      { product, count: cartItem ? cartItem.count + 1 : 1 },
-      { onSuccess: invalidateCart }
-    );
+    const newCount = cartItem ? cartItem.count + 1 : 1;
+    if (stockCount !== undefined && stockCount === newCount - 1) return;
+    upsertCart({ product, count: newCount }, { onSuccess: invalidateCart });
   };
 
   const removeProduct = () => {
-    if (cartItem) {
+    if (cartItem && cartItem.count !== 0) {
       upsertCart(
         { ...cartItem, count: cartItem.count - 1 },
         { onSuccess: invalidateCart }
