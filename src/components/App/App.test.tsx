@@ -37,7 +37,6 @@ test("Renders products list", async () => {
         ctx.json<AvailableProduct[]>(products)
       );
     }),
-    // @ts-expect-error api temporay unavailable
     rest.get(`${API_PATHS.cart}/profile/cart`, (req, res, ctx) => {
       return res(ctx.status(200), ctx.json<CartItem[]>([]));
     })
